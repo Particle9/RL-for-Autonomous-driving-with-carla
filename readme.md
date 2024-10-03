@@ -4,7 +4,7 @@ Author: Muhammad Aufa Helfiandri
 
 > Note: be informed that this project is still largely unfinished
 
-## Imitiation Learning
+## Imitation Learning
 
 To initialize the weight for the reinforcement learning model, I use Behavior Cloning on an preacquired data. Ideally, this should be done using Human Driver. However, in this project I utilize CARLA Autopilot's as the expert.
 
