@@ -20,6 +20,8 @@ Data collected from CARLA Autopilot includes:
 
 The agents was set to drive in the simulation for around 2-3 hours, collecting sensor data continuously. The environment featured a variety of urban driving scenarios, including intersections, pedestrian crossings, and highway segments. To simulate real-world complexity, the environment also included varying weather conditions such as rain, fog, and different times of day, allowing the model to learn from diverse driving experiences.
 
+The Data Collection is done using [carla_collector.py](carla_collector.py)
+
 ### Training
 
 The model is trained using behavior cloning, where it learns to mimic the expert's behavior by minimizing the loss between its predicted actions and the actions taken by the CARLA Autopilot. The loss function used is Mean Squared Error (MSE), comparing the predicted and actual steering angles, throttle values, and braking inputs.
