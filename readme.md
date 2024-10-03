@@ -65,9 +65,11 @@ Finally, the concatenated features are passed through additional linear layers t
 ### 2. Critic Neural Network Architecture
 ![Critic Neural Network Architecture](diagrams/critic-diagram.png)
 
-The Critic neural network evaluates the actions taken by the Actor network. It provides feedback to the Actor by assessing the quality of the predicted actions with respect to the current state of the environment. The Critic network architecture is similar to the Actor but includes additional value-estimation mechanisms.
+The Architecture of the Critic Neural Network largely the same as the Actor Network with 2 key differences. There're an additional input in the form of Actor Actions (Throttle, Break, Steering) and the output is one vector which represent the Q-Value.
 
-The Critic is designed to output a value that quantifies how beneficial the current state-action pair is, which guides the Actor in improving its policy. It includes layers for state encoding, sensor fusion, and finally, outputting a scalar value representing the action-value (Q-value) for the given state-action pair.
+The Critic neural network evaluates the actions taken by the Actor network. It provides feedback to the Actor by assessing the quality of the predicted actions with respect to the current state of the environment.
+
+The Critic is designed to quantifies how beneficial the current state-action pair is, which guides the Actor in improving its policy. It includes layers for state encoding, sensor fusion, and finally, outputting a scalar value representing the action-value (Q-value) for the given state-action pair.
 
 ### 3. Soft-Actor Critic
 
