@@ -24,7 +24,7 @@ The Data Collection is done using [carla_collector.py](carla_collector.py)
 
 ### Training
 
-The model is trained using behavior cloning, where it learns to mimic the expert's behavior by minimizing the loss between its predicted actions and the actions taken by the CARLA Autopilot. The loss function used is Mean Squared Error (MSE), comparing the predicted and actual steering angles, throttle values, and braking inputs.
+The model is trained using behavior cloning (as a Regression Supervised Learning), where it learns to mimic the expert's behavior by minimizing the loss between its predicted actions and the actions taken by the CARLA Autopilot. The loss function used is Mean Squared Error (MSE), comparing the predicted and actual steering angles, throttle values, and braking inputs.
 
 
 ## Reinforcement Learning (Using Soft-Actor Critic)
