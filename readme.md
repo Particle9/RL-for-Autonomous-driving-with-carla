@@ -4,7 +4,7 @@ Author: Muhammad Aufa Helfiandri
 
 > Note: be informed that this project is still largely unfinished
 
-## Imitiation Learning
+## Imitation Learning
 
 To initialize the weight for the reinforcement learning model, I use Behavior Cloning on an preacquired data. Ideally, this should be done using Human Driver. However, in this project I utilize CARLA Autopilot's as the expert.
 
@@ -19,6 +19,8 @@ Data collected from CARLA Autopilot includes:
 4. Action taken by vehicles (Throttle, Steering, Break)
 
 The agents was set to drive in the simulation for around 2-3 hours, collecting sensor data continuously. The environment featured a variety of urban driving scenarios, including intersections, pedestrian crossings, and highway segments. To simulate real-world complexity, the environment also included varying weather conditions such as rain, fog, and different times of day, allowing the model to learn from diverse driving experiences.
+
+The Data Collection is done using [carla_collector.py](carla_collector.py)
 
 ### Training
 
@@ -65,9 +67,11 @@ Finally, the concatenated features are passed through additional linear layers t
 ### 2. Critic Neural Network Architecture
 ![Critic Neural Network Architecture](diagrams/critic-diagram.png)
 
-The Critic neural network evaluates the actions taken by the Actor network. It provides feedback to the Actor by assessing the quality of the predicted actions with respect to the current state of the environment. The Critic network architecture is similar to the Actor but includes additional value-estimation mechanisms.
+The Architecture of the Critic Neural Network largely the same as the Actor Network with 2 key differences. There're an additional input in the form of Actor Actions (Throttle, Break, Steering) and the output is one vector which represent the Q-Value.
 
-The Critic is designed to output a value that quantifies how beneficial the current state-action pair is, which guides the Actor in improving its policy. It includes layers for state encoding, sensor fusion, and finally, outputting a scalar value representing the action-value (Q-value) for the given state-action pair.
+The Critic neural network evaluates the actions taken by the Actor network. It provides feedback to the Actor by assessing the quality of the predicted actions with respect to the current state of the environment.
+
+The Critic is designed to quantifies how beneficial the current state-action pair is, which guides the Actor in improving its policy. It includes layers for state encoding, sensor fusion, and finally, outputting a scalar value representing the action-value (Q-value) for the given state-action pair.
 
 ### 3. Soft-Actor Critic
 
