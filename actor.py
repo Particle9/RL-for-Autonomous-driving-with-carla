@@ -26,9 +26,15 @@ class Actor(nn.Module):
         output = self.transformer(features)
 
         # Apply specific activation functions for throttle, brake, and steering
-        throttle = torch.tanh(output[:, 0])  # Throttle can be negative or positive
-        brake = torch.relu(output[:, 1])     # Brake cannot be negative
-        steering = torch.tanh(output[:, 2])  # Steering can be negative or positive
+
+        # Throttle are between 0 and 1
+        throttle = torch.relu(output[:, 0])
+
+        # Brakes are between 0 and 1  
+        brake = torch.relu(output[:, 1])    
+         
+        # Steering can be positive or negative
+        steering = torch.tanh(output[:, 2])  
 
         # Stack the outputs back together
         actions = torch.stack((throttle, brake, steering), dim=1)
