@@ -1,42 +1,46 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 
 class TransformerBlock(nn.Module):
-    def __init__(self, in_dim, num_heads, ff_dim, out_dim, dropout_rate=0.1):
+    def __init__(self, in_dim, num_heads, ff_dim, out_dim, num_encoder_layers=6, num_decoder_layers=6, dropout_rate=0.1):
         super(TransformerBlock, self).__init__()
-        self.attention = nn.MultiheadAttention(in_dim, num_heads)
-        self.ffn = nn.Sequential(
-            nn.Linear(in_dim, ff_dim),
-            nn.ReLU(),
-            nn.Linear(ff_dim, in_dim)
-        )
+        
+        # Transformer Encoder Layer
+        encoder_layer = nn.TransformerEncoderLayer(d_model=in_dim, nhead=num_heads, dim_feedforward=ff_dim, dropout=dropout_rate)
+        self.encoder = nn.TransformerEncoder(encoder_layer, num_layers=num_encoder_layers)
+
+        # Transformer Decoder Layer
+        decoder_layer = nn.TransformerDecoderLayer(d_model=in_dim, nhead=num_heads, dim_feedforward=ff_dim, dropout=dropout_rate)
+        self.decoder = nn.TransformerDecoder(decoder_layer, num_layers=num_decoder_layers)
+
+        # Layer Normalization
         self.layernorm1 = nn.LayerNorm(in_dim, eps=1e-6)
         self.layernorm2 = nn.LayerNorm(in_dim, eps=1e-6)
-        self.dropout1 = nn.Dropout(dropout_rate)
-        self.dropout2 = nn.Dropout(dropout_rate)
-        
-        # Linear layers for final output
-        self.f1 = nn.Linear(1024, 512)
-        self.f2 = nn.Linear(512, 256)
-        self.f3 = nn.Linear(256, 64)
-        self.fout = nn.Linear(64, out_dim)  
 
-    def forward(self, inputs):
-        # inputs should have shape (seq_len, batch_size, embed_dim)
-        attn_output, _ = self.attention(inputs, inputs, inputs)
-        attn_output = self.dropout1(attn_output)
-        out1 = self.layernorm1(inputs + attn_output)
-        
-        ffn_output = self.ffn(out1)
-        ffn_output = self.dropout2(ffn_output)
-        out2 = self.layernorm2(out1 + ffn_output)
+        # Fully connected layers for the final output (Throttle, Brake, Steering)
+        self.fc1 = nn.Linear(in_dim, 512)
+        self.fc2 = nn.Linear(512, 256)
+        self.fc3 = nn.Linear(256, 64)
+        self.fc_out = nn.Linear(64, out_dim)
 
-        # Pass through the fully connected layers
-        x = torch.relu(self.f1(out2))
-        x = torch.relu(self.f2(x))
-        x = torch.relu(self.f3(x))
+    def forward(self, src, tgt):
+        # src and tgt should have shape (seq_len, batch_size, embed_dim)
         
-        # Final output layer
-        output = self.fout(x)
-        return output  # Output shape: (batch_size, 3) for throttle, brake, steering
+        # Encoder
+        encoded_src = self.encoder(src)  # Pass source input through the encoder
+        
+        # Decoder (uses the encoded source and the target)
+        decoded_output = self.decoder(tgt, encoded_src)  # Pass target and encoded source through decoder
+        
+        # Layer normalization after encoder and decoder
+        norm_output = self.layernorm1(decoded_output)
+        
+        # Fully connected layers for final task-specific output
+        x = torch.relu(self.fc1(norm_output))
+        x = torch.relu(self.fc2(x))
+        x = torch.relu(self.fc3(x))
+        
+        # Final output layer (e.g., throttle, brake, steering predictions)
+        output = self.fc_out(x)
+        
+        return output
